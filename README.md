@@ -1,2 +1,2 @@
 # Snake-Game
-# mrym-tanabande & mh-anari
+mrym-tanabande & mh-anari
