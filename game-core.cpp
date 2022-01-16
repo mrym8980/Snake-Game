@@ -22,8 +22,7 @@ struct Fruct
 struct Stone
 {int x,y;} st[3];
 
-void Gameover()
-{
+void Gameover(){
     RenderWindow window(VideoMode(w,h) , "Snake Game :)");
     while (window.isOpen())
     {
@@ -37,6 +36,7 @@ void Gameover()
         }
 
         window.clear(Color::Black);
+        
 
         window.display();
     }
@@ -155,3 +155,12 @@ int main()
     return 0;
 
 }
+
+// #include <iostream>
+
+// using namespace  std;
+
+// int main() {
+//     cout << "sdfdsfsdf" << endl;
+//    return 0; 
+// }
