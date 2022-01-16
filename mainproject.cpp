@@ -71,7 +71,7 @@ void Tick(){
     if(s[0].x > N){s[0].x = 0 ;}
     else if(s[0].y > M){s[0].y = 0 ;}
     else if(s[0].x < 0){s[0].x = N ;}
-    else if(s[0].y < 0){s[0].x = M ;}
+    else if(s[0].y < 0){s[0].y = M ;}
 
     for(int i = 1; i < num ; i++)
         if(s[0].x == s[i].x && s[0].y == s[i].y){num = i;}
