@@ -64,9 +64,9 @@ void Tick(){
         f.x = rand() % N;
         f.y = rand() % M;
     }
-    for(int i = 0; i < 3; i++)
+    /*for(int i = 0; i < 3; i++)
         if ((s[0].x == st[i].x) && (s[0].y == st[i].y))
-            Gameover();
+            Gameover();*/
 
     if(s[0].x > N){s[0].x = 0 ;}
     else if(s[0].y > M){s[0].y = 0 ;}
@@ -88,12 +88,12 @@ int main()
     t1.loadFromFile("green2.jfif");
     t2.loadFromFile("red.jfif", sf::IntRect(1, 1, 20, 20));
     t3.loadFromFile("apple.png");
-    t4.loadFromFile("stone.jpg");
+    //t4.loadFromFile("stone.jpg");
 
     Sprite sprite1(t1);
     Sprite sprite2(t2);
     Sprite sprite3(t3);
-    Sprite sprite4(t4);
+    //Sprite sprite4(t4);
     
     Clock clock;
     //float timer = 0 , delay = 5;
@@ -146,8 +146,8 @@ int main()
         sprite3.setPosition(f.x*size , f.y*size);//for apple
         window.draw(sprite3);
 
-        for(int i = 0 ; i < 3 ;i++)//for snake
-            { sprite4.setPosition(st[i].x , st[i].y) ; window.draw(sprite4); }
+        //for(int i = 0 ; i < 3 ;i++)//for snake
+        //    { sprite4.setPosition(st[i].x , st[i].y) ; window.draw(sprite4); }
 
         window.display();
     }
