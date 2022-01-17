@@ -31,12 +31,8 @@ public:
 };
 
 struct Apple {int x, y;} apple[2];
+struct Wall {int x[3], y[3];} wall[2];
 
-class Wall {
-public:
-    int x[3];
-    int y[3];
-};
 
 void gameover(RenderWindow& window, Info& info) {
     Font font;
@@ -85,10 +81,10 @@ void checkCollision(RenderWindow& window, Info& info, Snake& snake1, Snake& snak
     }
 
     // pass border of the window
-    if (snake1.x[0] > info.height) {snake1.x[0] = 0 ;}
-    if (snake1.y[0] > info.width) {snake1.y[0] = 0 ;}
-    if (snake1.x[0] < 0) {snake1.x[0] = info.height ;}
-    if (snake1.y[0] < 0) {snake1.y[0] = info.width ;}
+    if (snake1.x[0] > info.height) {snake1.x[0] = 0;}
+    if (snake1.y[0] > info.width) {snake1.y[0] = 0;}
+    if (snake1.x[0] < 0) {snake1.x[0] = info.height;}
+    if (snake1.y[0] < 0) {snake1.y[0] = info.width;}
 
     // check collision with itself
     for (int i = 4; i < snake1.len; i++)
