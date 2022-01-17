@@ -82,10 +82,10 @@ void checkCollision(RenderWindow& window, Info& info, Snake& snake1, Snake& snak
         }
     }
 
-    //Check the collision with the wall
+    // check collision with the wall
     for (int i = 0; i <= 1; i++)
         for (int j = 0; j <= 2; j++)
-            if ((snake1.x[0] == wall[i].x[j]) && (snake1.y[0] == wall[i].y[j])) 
+            if ((snake1.x[0] == wall[i].x[j]) && (snake1.y[0] == wall[i].y[j]))
                 gameover(window, info);
 
     // pass border of the window
@@ -126,36 +126,37 @@ void drawWall(RenderWindow& window, Info& info) {
         for(int j = 0; j <= 2; j++) {
             info.wallSprite.setPosition(wall[i].x[j] * info.sizeOfTiles,
                                         wall[i].y[j] * info.sizeOfTiles);
-            window.draw(info.wallSprite);  
+            window.draw(info.wallSprite);
         }
     }        
 }
 
 void initWalls(Info& info) {
     //Vertical wall
-    bool flag = false; 
+    bool flag = true; 
     while (1) {
-        wall[0].x[0] = rand() % info.height; wall[0].y[0] = rand() % info.width;
+        wall[0].x[0] = rand() % info.height;
+        wall[0].y[0] = rand() % info.width;
         for (int i = 1; i <= 2; i++) {
             wall[0].x[i] = wall[0].x[0];
-            wall[0].y[i] += wall[0].y[i - 1] + 1;
-            if(!wall[0].y[i] > info.width){flag = true; break;}
+            wall[0].y[i] = wall[0].y[i-1] + 1;
+            if(wall[0].y[i] > info.width){flag = false; break;}
         }
-        if(flag){break;}
+        if(flag == true){break;}
     }
 
     //Horizontal wall
-    flag = false;
+    flag = true;
     while (1) {
-        wall[1].x[0] = rand() % info.height; wall[1].y[0] = rand() % info.width;
+        wall[1].x[0] = rand() % info.height;
+        wall[1].y[0] = rand() % info.width;
         for (int i = 1; i <= 2; i++) {
-            wall[1].x[i - 1] += wall[1].x[i] + 1;
+            wall[1].x[i] = wall[1].x[i-1] + 1;
             wall[1].y[i] = wall[1].y[0];
-            if(!wall[1].x[i] > info.height){flag = true; break;}
+            if(wall[1].x[i] > info.height){flag = false; break;}
         }
-        if(flag){break;}
+        if(flag == true){break;}
     }
-
 }
 
 void drawGroundTiles(RenderWindow& window, Info& info) {
