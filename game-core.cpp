@@ -36,7 +36,6 @@ public:
 struct Apple {int x, y;} apple[2];
 struct Wall {int x[3], y[3];} wall[2];
 
-
 void gameover(RenderWindow& window, Info& info) {
     Font font;
     font.loadFromFile("font/comic.ttf");
@@ -123,12 +122,40 @@ void drawApple(RenderWindow& window, Info& info) {
 }
 
 void drawWall(RenderWindow& window, Info& info) {
-    for (int i = 0; i <= 1; i++)
+    for (int i = 0; i <= 1; i++) {
         for(int j = 0; j <= 2; j++) {
             info.wallSprite.setPosition(wall[i].x[j] * info.sizeOfTiles,
                                         wall[i].y[j] * info.sizeOfTiles);
             window.draw(info.wallSprite);  
-        }        
+        }
+    }        
+}
+
+void initWalls(Info& info) {
+    //Vertical wall
+    bool flag = false; 
+    while (1) {
+        wall[0].x[0] = rand() % info.height; wall[0].y[0] = rand() % info.width;
+        for (int i = 1; i <= 2; i++) {
+            wall[0].x[i] = wall[0].x[0];
+            wall[0].y[i] += wall[0].y[i - 1] + 1;
+            if(!wall[0].y[i] > info.width){flag = true; break;}
+        }
+        if(flag){break;}
+    }
+
+    //Horizontal wall
+    flag = false;
+    while (1) {
+        wall[1].x[0] = rand() % info.height; wall[1].y[0] = rand() % info.width;
+        for (int i = 1; i <= 2; i++) {
+            wall[1].x[i - 1] += wall[1].x[i] + 1;
+            wall[1].y[i] = wall[1].y[0];
+            if(!wall[1].x[i] > info.height){flag = true; break;}
+        }
+        if(flag){break;}
+    }
+
 }
 
 void drawGroundTiles(RenderWindow& window, Info& info) {
@@ -181,31 +208,8 @@ int main() {
 
     apple[0].x = 5; apple[0].y = 7;
     apple[1].x = 9; apple[1].y = 1;
-
-    //Vertical wall
-    bool flag = false; 
-    while (1) {
-        wall[0].x[0] = rand() % info->height; wall[0].y[0] = rand() % info->width;
-        for (int i = 1; i <= 2; i++) {
-            wall[0].x[i] = wall[0].x[0];
-            wall[0].y[i] += wall[0].y[i - 1] + 1;
-            if(!wall[0].y[i] > info->width){flag = true; break;}
-        }
-        if(flag){break;}
-    }
-
-    //Horizontal wall
-    flag = false;
-    while (1) {
-        wall[1].x[0] = rand() % info->height; wall[1].y[0] = rand() % info->width;
-        for (int i = 1; i <= 2; i++) {
-            wall[1].x[i - 1] += wall[1].x[i] + 1;
-            wall[1].y[i] = wall[1].y[0];
-            if(!wall[1].x[i] > info->height){flag = true; break;}
-        }
-        if(flag){break;}
-    }
-
+    initWalls(*info);
+    
     while (window->isOpen()) {
         Event event;
         while (window->pollEvent(event)) {
