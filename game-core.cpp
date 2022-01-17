@@ -8,18 +8,21 @@ using namespace sf;
 
 class Info {
 public:
-    int height = 50 , width = 30;
-    int sizeOfTiles = 20;
+    int height = 25 , width = 15;
+    int sizeOfTiles = 45;
     Texture tileTexture, snakeTexture, appleTexture, wallTexture;
-    Sprite groundSprite, snakeSprite, appleSprite;
+    Sprite groundSprite, snakeSprite, appleSprite, wallSprite;
 
     Info() {
-        tileTexture.loadFromFile("pictures/green2.jfif");
-        snakeTexture.loadFromFile("pictures/red.jfif", sf::IntRect(1, 1, 20, 20));
-        appleTexture.loadFromFile("pictures/apple.png", sf::IntRect(1, 1, 20, 20));
+        tileTexture.loadFromFile("pictures/green2.jpg");
+        snakeTexture.loadFromFile("pictures/red.jpg", sf::IntRect(1, 1, 45, 45));
+        appleTexture.loadFromFile("pictures/apple.png");
+        wallTexture.loadFromFile("pictures/stone.jpg");
+
         groundSprite.setTexture(tileTexture);
         snakeSprite.setTexture(snakeTexture);
         appleSprite.setTexture(appleTexture);
+        wallSprite.setTexture(wallTexture);
     }
 };
 
@@ -80,6 +83,12 @@ void checkCollision(RenderWindow& window, Info& info, Snake& snake1, Snake& snak
         }
     }
 
+    //Check the collision with the wall
+    for (int i = 0; i <= 1; i++)
+        for (int j = 0; j <= 2; j++)
+            if ((snake1.x[0] == wall[i].x[j]) && (snake1.y[0] == wall[i].y[j])) 
+                gameover(window, info);
+
     // pass border of the window
     if (snake1.x[0] > info.height) {snake1.x[0] = 0;}
     if (snake1.y[0] > info.width) {snake1.y[0] = 0;}
@@ -108,9 +117,18 @@ void drawSnake(RenderWindow& window, Info& info, Snake& snake) {
 void drawApple(RenderWindow& window, Info& info) {
     for (int i = 0; i <= 1; i++) {
         info.appleSprite.setPosition(apple[i].x * info.sizeOfTiles,
-                                    apple[i].y * info.sizeOfTiles);
+                                     apple[i].y * info.sizeOfTiles);
         window.draw(info.appleSprite);
     }
+}
+
+void drawWall(RenderWindow& window, Info& info) {
+    for (int i = 0; i <= 1; i++)
+        for(int j = 0; j <= 2; j++) {
+            info.wallSprite.setPosition(wall[i].x[j] * info.sizeOfTiles,
+                                        wall[i].y[j] * info.sizeOfTiles);
+            window.draw(info.wallSprite);  
+        }        
 }
 
 void drawGroundTiles(RenderWindow& window, Info& info) {
@@ -157,11 +175,36 @@ int main() {
     auto window = createWindow(*info);
     srand(time(0));
     window->setFramerateLimit(15);
-    Snake snake1, snake2;
+    Snake snake1, snake2; 
     snake1.x[0] = 1; snake1.y[0] = 1;
     snake2.x[0] = 10; snake2.y[0] = 10;
-    apple[0].x = 25; apple[0].y = 25;
-    apple[1].x = 35; apple[1].y = 15;
+
+    apple[0].x = 5; apple[0].y = 7;
+    apple[1].x = 9; apple[1].y = 1;
+
+    //Vertical wall
+    bool flag = false; 
+    while (1) {
+        wall[0].x[0] = rand() % info->height; wall[0].y[0] = rand() % info->width;
+        for (int i = 1; i <= 2; i++) {
+            wall[0].x[i] = wall[0].x[0];
+            wall[0].y[i] += wall[0].y[i - 1] + 1;
+            if(!wall[0].y[i] > info->width){flag = true; break;}
+        }
+        if(flag){break;}
+    }
+
+    //Horizontal wall
+    flag = false;
+    while (1) {
+        wall[1].x[0] = rand() % info->height; wall[1].y[0] = rand() % info->width;
+        for (int i = 1; i <= 2; i++) {
+            wall[1].x[i - 1] += wall[1].x[i] + 1;
+            wall[1].y[i] = wall[1].y[0];
+            if(!wall[1].x[i] > info->height){flag = true; break;}
+        }
+        if(flag){break;}
+    }
 
     while (window->isOpen()) {
         Event event;
@@ -180,6 +223,7 @@ int main() {
         drawSnake(*window, *info, snake1);
         drawSnake(*window, *info, snake2);
         drawApple(*window, *info);
+        drawWall(*window, *info);
         window->display();
     }
     return 0;
