@@ -45,8 +45,8 @@ sf::Text* menu::getSpeedText() {
 }
 void menu::increaseSpeed() {
     this->speed++;
-    if (this->speed > 3)
-        this->speed = 3;
+    if (this->speed > 2)
+        this->speed = 2;
     this->speedText = "Speed : " + std::to_string(this->speed);
 }
 void menu::decreaseSpeed() {
