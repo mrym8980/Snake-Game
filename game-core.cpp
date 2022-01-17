@@ -133,30 +133,22 @@ void drawWall(RenderWindow& window, Info& info) {
 
 void initWalls(Info& info) {
     //Vertical wall
-    bool flag = true; 
-    while (1) {
-        wall[0].x[0] = rand() % info.height;
-        wall[0].y[0] = rand() % info.width;
+    do{
+        wall[0].x[0] = rand() % info.height; wall[0].y[0] = rand() % info.width;
         for (int i = 1; i <= 2; i++) {
             wall[0].x[i] = wall[0].x[0];
-            wall[0].y[i] = wall[0].y[i-1] + 1;
-            if(wall[0].y[i] > info.width){flag = false; break;}
+            wall[0].y[i] += wall[0].y[i - 1] + 1;
         }
-        if(flag == true){break;}
-    }
+    }while(wall[0].y[0] > info.width - 3);
 
     //Horizontal wall
-    flag = true;
-    while (1) {
-        wall[1].x[0] = rand() % info.height;
-        wall[1].y[0] = rand() % info.width;
+    do{
+        wall[1].x[0] = rand() % info.height; wall[1].y[0] = rand() % info.width;
         for (int i = 1; i <= 2; i++) {
-            wall[1].x[i] = wall[1].x[i-1] + 1;
+            wall[1].x[i] += wall[1].x[i - 1] + 1;
             wall[1].y[i] = wall[1].y[0];
-            if(wall[1].x[i] > info.height){flag = false; break;}
         }
-        if(flag == true){break;}
-    }
+    }while(wall[1].x[0] > info.height - 3);
 }
 
 void drawGroundTiles(RenderWindow& window, Info& info) {
