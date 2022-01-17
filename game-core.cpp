@@ -6,161 +6,173 @@
 
 using namespace sf;
 
-int N = 50 , M = 30;
-int size = 20;
-int w = size * N;
-int h = size * M;
+class Info {
+public:
+    int height = 50 , width = 30;
+    int sizeOfTiles = 20;
+    Texture tileTexture, snakeTexture, appleTexture, wallTexture;
+    Sprite groundSprite, snakeSprite, appleSprite;
 
-int dir,num = 4;
+    Info() {
+        tileTexture.loadFromFile("pictures/green2.jfif");
+        snakeTexture.loadFromFile("pictures/red.jfif", sf::IntRect(1, 1, 20, 20));
+        appleTexture.loadFromFile("pictures/apple.png", sf::IntRect(1, 1, 20, 20));
+        groundSprite.setTexture(tileTexture);
+        snakeSprite.setTexture(snakeTexture);
+        appleSprite.setTexture(appleTexture);
+    }
+};
 
-struct snake
-{int x,y;} s[100];
+class Snake {
+public:
+    int len = 4;
+    int x[100], y[100];
+    std::string direction;
+};
 
-struct Fruct
-{int x,y;} f;
+struct Apple {int x, y;} apple[2];
 
-struct Stone
-{int x,y;} st[3];
+class Wall {
+public:
+    int x[3];
+    int y[3];
+};
 
-void Gameover(){
-    RenderWindow window(VideoMode(w,h) , "Snake Game :)");
-    while (window.isOpen())
-    {
-        Event e;
-        while(window.pollEvent(e))
-        {
-            if(e.type == Event::Closed)
+void gameover(RenderWindow& window, Info& info) {
+    Font font;
+    font.loadFromFile("font/comic.ttf");
+    Text text;
+    text.setFont(font);
+    text.setString("Game Over :)");
+    text.setColor(Color::Black);
+    while (window.isOpen()) {
+        Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == Event::Closed)
                 window.close();
-            if(Keyboard::isKeyPressed(Keyboard::Enter))
+            if (Keyboard::isKeyPressed(Keyboard::Enter))
                 window.close();
-        }
-
-        window.clear(Color::Black);
-        
-
-        window.display();
-    }
-    
-}
-
-
-void Tick(){
-    for(int i = num ; i > 0 ; i--)
-    {
-        s[i].x = s[i-1].x;
-        s[i].y = s[i-1].y;
-    }
-    
-    //f.x += 1;
-
-    if(dir == 0){s[0].y += 1;}
-    if(dir == 1){s[0].x -= 1;}
-    if(dir == 2){s[0].x += 1;}
-    if(dir == 3){s[0].y -= 1;}
-
-    if ((s[0].x == f.x) && (s[0].y == f.y))
-    {
-        num++;
-        f.x = rand() % N;
-        f.y = rand() % M;
-    }
-    /*for(int i = 0; i < 3; i++)
-        if ((s[0].x == st[i].x) && (s[0].y == st[i].y))
-            Gameover();*/
-
-    if(s[0].x > N){s[0].x = 0 ;}
-    else if(s[0].y > M){s[0].y = 0 ;}
-    else if(s[0].x < 0){s[0].x = N ;}
-    else if(s[0].y < 0){s[0].y = M ;}
-
-    for(int i = 1; i < num ; i++)
-        if(s[0].x == s[i].x && s[0].y == s[i].y){num = i;}
-}
-
-
-int main()
-{
-    srand(time(0));
-
-    RenderWindow window(VideoMode(w,h) , "Snake Game :)");
-
-    Texture t1 , t2 , t3 , t4;
-    t1.loadFromFile("pictures/green2.jfif");
-    t2.loadFromFile("pictures/red.jfif", sf::IntRect(1, 1, 20, 20));
-    t3.loadFromFile("pictures/apple.png");
-    //t4.loadFromFile("stone.jpg");
-
-    Sprite sprite1(t1);
-    Sprite sprite2(t2);
-    Sprite sprite3(t3);
-    //Sprite sprite4(t4);
-    
-    Clock clock;
-    //float timer = 0 , delay = 5;
-
-    f.x = 10; f.y = 10;
-    st[0].x = rand() % N; st[0].y = rand() % M;
-    for(int i = 1; i <3; i++)
-    {
-        st[i].x = st[0].x;
-        st[i].y = st[i-1].y + 1;
-    }
-    window.setFramerateLimit(30);
-
-    while (window.isOpen())
-    {
-        //float time = clock.getElapsedTime().asSeconds();
-        //timer += time;
-        
-
-        Event e;
-        while(window.pollEvent(e))
-        {
-            if(e.type == Event::Closed)
+            if (Keyboard::isKeyPressed(Keyboard::Escape))
                 window.close();
         }
 
-        if(Keyboard::isKeyPressed(Keyboard::Left)){dir = 1;}
-        if(Keyboard::isKeyPressed(Keyboard::Right)){dir = 2;}
-        if(Keyboard::isKeyPressed(Keyboard::Up)){dir = 3;}
-        if(Keyboard::isKeyPressed(Keyboard::Down)){dir = 0;}
-
-
-        //if(timer > delay){timer = 0 ; Tick();}
-
-        Tick();
-
-
-        window.clear();
-        ///draw///
-        for(int i = 0 ; i < N ; i++)
-            for(int j = 0 ; j < M ; j++)
-                {
-                    sprite1.setPosition(i * size , j * size);
-                    window.draw(sprite1);
-                }
-        
-        for(int i = 0 ; i < num ;i++)//for snake
-            { sprite2.setPosition(s[i].x*size , s[i].y*size) ; window.draw(sprite2); }
-
-        sprite3.setPosition(f.x*size , f.y*size);//for apple
-        window.draw(sprite3);
-
-        //for(int i = 0 ; i < 3 ;i++)//for snake
-        //    { sprite4.setPosition(st[i].x , st[i].y) ; window.draw(sprite4); }
-
+        window.clear(Color::Red);
+        window.draw(text);
         window.display();
     }
-    
+}
+
+void updateSnake(Snake& snake) {
+    for (int i = snake.len; i > 0; i--) {
+        snake.x[i] = snake.x[i-1];
+        snake.y[i] = snake.y[i-1];
+    }
+
+    if (snake.direction == "down")  {snake.y[0] += 1;}
+    if (snake.direction == "left")  {snake.x[0] -= 1;}
+    if (snake.direction == "right") {snake.x[0] += 1;}
+    if (snake.direction == "up")    {snake.y[0] -= 1;}
+}
+
+void checkCollision(RenderWindow& window, Info& info, Snake& snake) {
+    // check eating apples
+    for (int i = 0; i <= 0; i++) { // TODO : should become i <= 1
+        if ((snake.x[0] == apple[i].x) && (snake.y[0] == apple[i].y)) {
+            snake.len++;
+            apple[i].x = rand() % info.height;
+            apple[i].y = rand() % info.width;
+        }
+    }
+
+    // pass border of the window
+    if (snake.x[0] > info.height) {snake.x[0] = 0 ;}
+    if (snake.y[0] > info.width) {snake.y[0] = 0 ;}
+    if (snake.x[0] < 0) {snake.x[0] = info.height ;}
+    if (snake.y[0] < 0) {snake.y[0] = info.width ;}
+
+    // check collision with itself
+    for (int i = 4; i < snake.len; i++)
+        if (snake.x[0] == snake.x[i] && snake.y[0] == snake.y[i])
+            gameover(window, info);
+}
+
+void drawSnake(RenderWindow& window, Info& info, Snake& snake) {
+    for (int i = 0; i < snake.len; i++) {
+        info.snakeSprite.setPosition(snake.x[i] * info.sizeOfTiles,
+                                     snake.y[i] * info.sizeOfTiles);
+        window.draw(info.snakeSprite);
+    }
+}
+
+void drawApple(RenderWindow& window, Info& info) {
+    info.appleSprite.setPosition(apple[0].x * info.sizeOfTiles,
+                                 apple[0].y * info.sizeOfTiles);
+    window.draw(info.appleSprite);
+}
+
+void drawGroundTiles(RenderWindow& window, Info& info) {
+    for (int i = 0; i < info.height; i++) {
+        for (int j = 0; j < info.width; j++) {
+                info.groundSprite.setPosition(i * info.sizeOfTiles,
+                                              j * info.sizeOfTiles);
+                window.draw(info.groundSprite);
+        }
+    }
+}
+
+RenderWindow* createWindow(Info info) {
+    int height = info.height * info.sizeOfTiles;
+    int width = info.width * info.sizeOfTiles;
+    static RenderWindow window(VideoMode(height, width), "Snake Game :)");
+    return &window;
+}
+
+void checkKeyboard1(Snake& snake) {
+    if (Keyboard::isKeyPressed(Keyboard::Left) && snake.direction != "right")
+        snake.direction = "left";
+    if (Keyboard::isKeyPressed(Keyboard::Right) && snake.direction != "left")
+        snake.direction = "right";
+    if (Keyboard::isKeyPressed(Keyboard::Up) && snake.direction != "down")
+        snake.direction = "up";
+    if (Keyboard::isKeyPressed(Keyboard::Down) && snake.direction != "up") 
+        snake.direction = "down";
+}
+
+void checkKeyboard2(Snake& snake) {
+    if (Keyboard::isKeyPressed(Keyboard::A) && snake.direction != "right")
+        snake.direction = "left";
+    if (Keyboard::isKeyPressed(Keyboard::D) && snake.direction != "left")
+        snake.direction = "right";
+    if (Keyboard::isKeyPressed(Keyboard::W) && snake.direction != "down")
+        snake.direction = "up";
+    if (Keyboard::isKeyPressed(Keyboard::S) && snake.direction != "up") 
+        snake.direction = "down";
+}
+
+int main() {
+    Info* info = new Info();
+    auto window = createWindow(*info);
+    srand(time(0));    
+    window->setFramerateLimit(15);
+    Snake snake1, snake2;
+    snake1.x[0] = 1; snake1.y[0] = 1;
+    apple[0].x = 10; apple[0].y = 10;
+
+    while (window->isOpen()) {
+        Event event;
+        while (window->pollEvent(event)) {
+            if(event.type == Event::Closed)
+                window->close();
+        }
+        checkKeyboard1(snake1);
+        updateSnake(snake1);
+        checkCollision(*window, *info, snake1);
+
+        window->clear();
+        drawGroundTiles(*window, *info);
+        drawSnake(*window, *info, snake1);
+        drawApple(*window, *info);
+        window->display();
+    }
     return 0;
-
 }
-
-// #include <iostream>
-
-// using namespace  std;
-
-// int main() {
-//     cout << "sdfdsfsdf" << endl;
-//    return 0; 
-// }
