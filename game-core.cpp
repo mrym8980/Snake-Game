@@ -74,25 +74,30 @@ void updateSnake(Snake& snake) {
     if (snake.direction == "up")    {snake.y[0] -= 1;}
 }
 
-void checkCollision(RenderWindow& window, Info& info, Snake& snake) {
+void checkCollision(RenderWindow& window, Info& info, Snake& snake1, Snake& snake2) {
     // check eating apples
-    for (int i = 0; i <= 0; i++) { // TODO : should become i <= 1
-        if ((snake.x[0] == apple[i].x) && (snake.y[0] == apple[i].y)) {
-            snake.len++;
+    for (int i = 0; i <= 1; i++) {
+        if ((snake1.x[0] == apple[i].x) && (snake1.y[0] == apple[i].y)) {
+            snake1.len++;
             apple[i].x = rand() % info.height;
             apple[i].y = rand() % info.width;
         }
     }
 
     // pass border of the window
-    if (snake.x[0] > info.height) {snake.x[0] = 0 ;}
-    if (snake.y[0] > info.width) {snake.y[0] = 0 ;}
-    if (snake.x[0] < 0) {snake.x[0] = info.height ;}
-    if (snake.y[0] < 0) {snake.y[0] = info.width ;}
+    if (snake1.x[0] > info.height) {snake1.x[0] = 0 ;}
+    if (snake1.y[0] > info.width) {snake1.y[0] = 0 ;}
+    if (snake1.x[0] < 0) {snake1.x[0] = info.height ;}
+    if (snake1.y[0] < 0) {snake1.y[0] = info.width ;}
 
     // check collision with itself
-    for (int i = 4; i < snake.len; i++)
-        if (snake.x[0] == snake.x[i] && snake.y[0] == snake.y[i])
+    for (int i = 4; i < snake1.len; i++)
+        if (snake1.x[0] == snake1.x[i] && snake1.y[0] == snake1.y[i])
+            gameover(window, info);
+
+    // check collision with snake2
+    for (int i = 0; i < snake2.len; i++)
+        if (snake1.x[0] == snake2.x[i] && snake1.y[0] == snake2.y[i])
             gameover(window, info);
 }
 
@@ -105,9 +110,11 @@ void drawSnake(RenderWindow& window, Info& info, Snake& snake) {
 }
 
 void drawApple(RenderWindow& window, Info& info) {
-    info.appleSprite.setPosition(apple[0].x * info.sizeOfTiles,
-                                 apple[0].y * info.sizeOfTiles);
-    window.draw(info.appleSprite);
+    for (int i = 0; i <= 1; i++) {
+        info.appleSprite.setPosition(apple[i].x * info.sizeOfTiles,
+                                    apple[i].y * info.sizeOfTiles);
+        window.draw(info.appleSprite);
+    }
 }
 
 void drawGroundTiles(RenderWindow& window, Info& info) {
@@ -127,36 +134,38 @@ RenderWindow* createWindow(Info info) {
     return &window;
 }
 
-void checkKeyboard1(Snake& snake) {
-    if (Keyboard::isKeyPressed(Keyboard::Left) && snake.direction != "right")
-        snake.direction = "left";
-    if (Keyboard::isKeyPressed(Keyboard::Right) && snake.direction != "left")
-        snake.direction = "right";
-    if (Keyboard::isKeyPressed(Keyboard::Up) && snake.direction != "down")
-        snake.direction = "up";
-    if (Keyboard::isKeyPressed(Keyboard::Down) && snake.direction != "up") 
-        snake.direction = "down";
-}
+void checkKeyboard(Snake& snake1, Snake& snake2) {
+    // check keyboards for snake1
+    if (Keyboard::isKeyPressed(Keyboard::Left) && snake1.direction != "right")
+        snake1.direction = "left";
+    if (Keyboard::isKeyPressed(Keyboard::Right) && snake1.direction != "left")
+        snake1.direction = "right";
+    if (Keyboard::isKeyPressed(Keyboard::Up) && snake1.direction != "down")
+        snake1.direction = "up";
+    if (Keyboard::isKeyPressed(Keyboard::Down) && snake1.direction != "up") 
+        snake1.direction = "down";
 
-void checkKeyboard2(Snake& snake) {
-    if (Keyboard::isKeyPressed(Keyboard::A) && snake.direction != "right")
-        snake.direction = "left";
-    if (Keyboard::isKeyPressed(Keyboard::D) && snake.direction != "left")
-        snake.direction = "right";
-    if (Keyboard::isKeyPressed(Keyboard::W) && snake.direction != "down")
-        snake.direction = "up";
-    if (Keyboard::isKeyPressed(Keyboard::S) && snake.direction != "up") 
-        snake.direction = "down";
+    // check keyboards for snake2
+    if (Keyboard::isKeyPressed(Keyboard::A) && snake2.direction != "right")
+        snake2.direction = "left";
+    if (Keyboard::isKeyPressed(Keyboard::D) && snake2.direction != "left")
+        snake2.direction = "right";
+    if (Keyboard::isKeyPressed(Keyboard::W) && snake2.direction != "down")
+        snake2.direction = "up";
+    if (Keyboard::isKeyPressed(Keyboard::S) && snake2.direction != "up") 
+        snake2.direction = "down";
 }
 
 int main() {
     Info* info = new Info();
     auto window = createWindow(*info);
-    srand(time(0));    
+    srand(time(0));
     window->setFramerateLimit(15);
     Snake snake1, snake2;
     snake1.x[0] = 1; snake1.y[0] = 1;
-    apple[0].x = 10; apple[0].y = 10;
+    snake2.x[0] = 10; snake2.y[0] = 10;
+    apple[0].x = 25; apple[0].y = 25;
+    apple[1].x = 35; apple[1].y = 15;
 
     while (window->isOpen()) {
         Event event;
@@ -164,13 +173,16 @@ int main() {
             if(event.type == Event::Closed)
                 window->close();
         }
-        checkKeyboard1(snake1);
+        checkKeyboard(snake1, snake2);
         updateSnake(snake1);
-        checkCollision(*window, *info, snake1);
+        updateSnake(snake2);
+        checkCollision(*window, *info, snake1, snake2);
+        checkCollision(*window, *info, snake2, snake1);
 
         window->clear();
         drawGroundTiles(*window, *info);
         drawSnake(*window, *info, snake1);
+        drawSnake(*window, *info, snake2);
         drawApple(*window, *info);
         window->display();
     }
