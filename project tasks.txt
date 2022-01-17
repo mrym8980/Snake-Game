@@ -1,0 +1,13 @@
+[ ] clean code
+[+] texture
+[ ] fruit
+---[+] draw
+---[ ] collision
+[ ] stone
+---[+] draw
+---[ ] collision
+[+] gameover
+[ ] speed handling
+[ ] merge all src and headers
+[ ] music
+[ ] fix bugs
