@@ -11,16 +11,20 @@ public:
     int height = 25 , width = 15;
     int sizeOfTiles = 45;
     Texture tileTexture, snakeTexture, appleTexture, wallTexture;
-    Sprite groundSprite, snakeSprite, appleSprite, wallSprite;
+    Sprite groundSprite, appleSprite, wallSprite;
+    CircleShape snakeSprite;
 
     Info() {
-        tileTexture.loadFromFile("pictures/green2.jpg");
-        snakeTexture.loadFromFile("pictures/red.jpg", sf::IntRect(1, 1, 45, 45));
-        appleTexture.loadFromFile("pictures/apple.png");
+        CircleShape newSnakeSprite(sizeOfTiles/2, 8);
+
+        tileTexture.loadFromFile("pictures/blue2.jpg");
+        snakeTexture.loadFromFile("pictures/sname.jpg",IntRect(1, 1, 45, 45));
+        appleTexture.loadFromFile("pictures/Untitled-1.psd");
         wallTexture.loadFromFile("pictures/stone.jpg");
 
         groundSprite.setTexture(tileTexture);
-        snakeSprite.setTexture(snakeTexture);
+        newSnakeSprite.setTexture(&snakeTexture);
+        snakeSprite = newSnakeSprite; 
         appleSprite.setTexture(appleTexture);
         wallSprite.setTexture(wallTexture);
     }
@@ -74,11 +78,21 @@ void updateSnake(Snake& snake) {
 
 void checkCollision(RenderWindow& window, Info& info, Snake& snake1, Snake& snake2) {
     // check eating apples
+    bool flag = false;
     for (int i = 0; i <= 1; i++) {
         if ((snake1.x[0] == apple[i].x) && (snake1.y[0] == apple[i].y)) {
             snake1.len++;
-            apple[i].x = rand() % info.height;
-            apple[i].y = rand() % info.width;
+            while (!flag)
+            {
+                flag = true;
+                apple[i].x = rand() % info.height;
+                apple[i].y = rand() % info.width;
+
+                for (int j = 0; j < 3; j++){
+                    if (apple[i].x == wall[0].x[j] && apple[i].y == wall[0].y[j]){flag = false ; break ;}
+                    if (apple[i].x == wall[1].x[j] && apple[i].y == wall[1].y[j]){flag = false ; break ;}
+                }
+            }
         }
     }
 
@@ -133,22 +147,60 @@ void drawWall(RenderWindow& window, Info& info) {
 
 void initWalls(Info& info) {
     //Vertical wall
+    bool flag = true;
     do{
-        wall[0].x[0] = rand() % info.height; wall[0].y[0] = rand() % info.width;
+        flag = true;
+        wall[0].x[0] = rand() % info.height ; wall[0].y[0] = rand() % info.width;
+
+        if (wall[0].x[0] == 1 && wall[0].y[0] == 1)flag = false;//check Collision with snake 
+        if (wall[0].x[0] == 10 && wall[0].y[0] == 10)flag = false;
+
+        if (wall[0].x[0] == 5 && wall[0].y[0] == 7)flag = false;//check Collision with fish
+        if (wall[0].x[0] == 1 && wall[0].y[0] == 9)flag = false;
+
         for (int i = 1; i <= 2; i++) {
             wall[0].x[i] = wall[0].x[0];
-            wall[0].y[i] += wall[0].y[i - 1] + 1;
+            wall[0].y[i] = wall[0].y[i - 1] + 1;
+
+            //std::cout << "wall vertical [0] [1] [2]" << std::endl;
+            //std::cout << wall[0].x[0] << "\t" << wall[0].x[1] << "\t" << wall[0].x[2] << std::endl;
+            //std::cout << wall[0].y[0] << "\t" << wall[0].y[1] << "\t" << wall[0].y[2] << std::endl;
+
+            if (wall[0].x[i] == 1 && wall[0].y[i] == 1){flag = false;break;}
+            else if (wall[0].x[i] == 10 && wall[0].y[i] == 10){flag = false;break;}
         }
-    }while(wall[0].y[0] > info.width - 3);
+    }while(wall[0].y[0] > info.width - 3 || !flag);
+
 
     //Horizontal wall
-    do{
+    
+    do {
+        flag = true;
         wall[1].x[0] = rand() % info.height; wall[1].y[0] = rand() % info.width;
+
+        if (wall[1].x[0] == 1 && wall[1].y[0] == 1)flag = false;//check Collision with snake
+        if (wall[1].x[0] == 10 && wall[1].y[0] == 10)flag = false;
+
+        if (wall[1].x[0] == 5 && wall[1].y[0] == 7)flag = false;//check Collision with fish
+        if (wall[1].x[0] == 1 && wall[1].y[0] == 9)flag = false;
+
+        else if (abs (wall[1].x[0] - wall[0].x[1]) <= 3)flag = false;//distance between walls
+        else if (abs (wall[1].y[0] - wall[0].y[1]) <= 4)flag = false;//distance between walls
+
         for (int i = 1; i <= 2; i++) {
-            wall[1].x[i] += wall[1].x[i - 1] + 1;
+            wall[1].x[i] = wall[1].x[i - 1] + 1;
             wall[1].y[i] = wall[1].y[0];
+
+            //std::cout << "wall h [0] [1] [2]" << std::endl;
+            //std::cout << wall[1].x[0] << "\t" << wall[1].x[1] << "\t" << wall[1].x[2] << std::endl;
+            //std::cout << wall[1].y[0] << "\t" << wall[1].y[1] << "\t" << wall[1].y[2] << std::endl;
+
+            if (wall[1].x[i] == 1 && wall[1].y[i] == 1){flag = false;break;}
+            else if (wall[1].x[i] == 10 && wall[1].y[i] == 10){flag = false;break;}
+
         }
-    }while(wall[1].x[0] > info.height - 3);
+    }while (wall[1].x[0] > info.height - 3 || !flag);
+
 }
 
 void drawGroundTiles(RenderWindow& window, Info& info) {
