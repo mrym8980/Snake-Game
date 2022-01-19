@@ -1,14 +1,14 @@
-[ ] clean code
+[ ] clean code //at the end
 [+] texture
 [ ] fruit
 ---[+] draw
 ---[ ] collision
-[ ] stone
+[ ] wall
 ---[+] draw
 ---[ ] collision
 [+] gameover
 [+] menu
 [ ] speed handling
-[ ] merge all src and headers
-[ ] music
+[ ] merge all src and headers //at the end
+[+] music
 [ ] fix bugs
