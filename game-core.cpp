@@ -162,12 +162,7 @@ void initWalls(Info& info) {
 
         for (int i = 1; i <= 2; i++) {
             wall[0].x[i] = wall[0].x[0];
-            wall[0].y[i] = wall[0].y[i - 1] + 1;
-
-            //std::cout << "wall vertical [0] [1] [2]" << std::endl;
-            //std::cout << wall[0].x[0] << "\t" << wall[0].x[1] << "\t" << wall[0].x[2] << std::endl;
-            //std::cout << wall[0].y[0] << "\t" << wall[0].y[1] << "\t" << wall[0].y[2] << std::endl;
-
+            wall[0].y[i] = wall[0].y[i - 1] + 1;           
             if (wall[0].x[i] == 1 && wall[0].y[i] == 1){flag = false;break;}
             else if (wall[0].x[i] == 10 && wall[0].y[i] == 10){flag = false;break;}
         }
@@ -192,11 +187,6 @@ void initWalls(Info& info) {
         for (int i = 1; i <= 2; i++) {
             wall[1].x[i] = wall[1].x[i - 1] + 1;
             wall[1].y[i] = wall[1].y[0];
-
-            //std::cout << "wall h [0] [1] [2]" << std::endl;
-            //std::cout << wall[1].x[0] << "\t" << wall[1].x[1] << "\t" << wall[1].x[2] << std::endl;
-            //std::cout << wall[1].y[0] << "\t" << wall[1].y[1] << "\t" << wall[1].y[2] << std::endl;
-
             if (wall[1].x[i] == 1 && wall[1].y[i] == 1){flag = false;break;}
             else if (wall[1].x[i] == 10 && wall[1].y[i] == 10){flag = false;break;}
 
@@ -266,7 +256,7 @@ int main() {
         }
         checkKeyboard(snake1, snake2);
 
-        if (clock.getElapsedTime() > seconds(0.2))
+        if (clock.getElapsedTime() > seconds(0.2))//handeling the speed of snake
         {
             updateSnake(snake1);
             updateSnake(snake2);
