@@ -1,8 +1,10 @@
 #include <iostream>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include <SFML/System/Clock.hpp>
+#include <SFML/System/Time.hpp>
 #include <cmath>
-#include <time.h>
+//#include <time.h>
 
 using namespace sf;
 
@@ -246,7 +248,7 @@ int main() {
     Info* info = new Info();
     auto window = createWindow(*info);
     srand(time(0));
-    window->setFramerateLimit(15);
+    window->setFramerateLimit(30);
     Snake snake1, snake2; 
     snake1.x[0] = 1; snake1.y[0] = 1;
     snake2.x[0] = 10; snake2.y[0] = 10;
@@ -254,6 +256,7 @@ int main() {
     apple[0].x = 5; apple[0].y = 7;
     apple[1].x = 9; apple[1].y = 1;
     initWalls(*info);
+    Clock clock;
     
     while (window->isOpen()) {
         Event event;
@@ -262,15 +265,20 @@ int main() {
                 window->close();
         }
         checkKeyboard(snake1, snake2);
-        updateSnake(snake1);
-        updateSnake(snake2);
+
+        if (clock.getElapsedTime() > seconds(0.2))
+        {
+            updateSnake(snake1);
+            updateSnake(snake2);
+            clock.restart();            
+        }
+
         checkCollision(*window, *info, snake1, snake2);
         checkCollision(*window, *info, snake2, snake1);
-
         window->clear();
         drawGroundTiles(*window, *info);
         drawSnake(*window, *info, snake1);
-        drawSnake(*window, *info, snake2);
+        drawSnake(*window, *info, snake2); 
         drawApple(*window, *info);
         drawWall(*window, *info);
         window->display();
