@@ -10,10 +10,10 @@ int main() {
     window.setFramerateLimit(60);
     Music music;
     music.openFromFile("music/backgroundMusic.ogg");
-    music.play();
 
     int speed;
     while (1) {
+        music.play();
         showMenu(window, music, speed);
         showGame(window, speed);
     }
