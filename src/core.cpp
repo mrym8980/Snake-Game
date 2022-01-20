@@ -38,9 +38,13 @@ void gameover(RenderWindow& window, Info& info) {
     font.loadFromFile("font/comic.ttf");
     Text text;
     text.setFont(font);
-    text.setString("Game Over :)\n<Enter> : restart\n<Esc> exit");
+    text.setString("<Enter> : restart\n   <Esc> : exit");
     text.setColor(Color::Yellow);
-    text.setPosition(10, 10);
+    text.setPosition(Vector2f(10, 585));
+    Texture texture;
+    texture.loadFromFile("pictures/gameover.png");
+    Sprite sprite(texture);
+    sprite.setPosition(Vector2f(-90, -20));
     while (window.isOpen()) {
         Event event;
         while (window.pollEvent(event)) {
@@ -53,8 +57,8 @@ void gameover(RenderWindow& window, Info& info) {
                 exit(0);
             }
         }
-
         window.clear(Color::Black);
+        window.draw(sprite);
         window.draw(text);
         window.display();
     }
